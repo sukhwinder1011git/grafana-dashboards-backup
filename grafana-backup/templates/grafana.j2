@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+
+import json, requests, base64, os
+
+def download_dashboards(url, user, password):
+    #creating base64 has with user:password
+    base64string = base64.b64encode(bytes(user + ':' + password, 'utf-8'))
+    # define the headers to get the dashboard
+    headers = {'Authorization': 'Basic ' + base64string.decode('ascii')}
+    # get the dashboard
+    response = requests.get(url+'/api/search?query=&', headers=headers)
+    # convert the response to json
+    dashboards = json.loads(response.text)
+    print(dashboards)
+    # loop through the dashboards
+    for dashboard in dashboards:
+        # define the url to get the dashboard
+        print(dashboard['uid'])
+        newurl = url +'/api/dashboards/uid/' + dashboard['uid'] + '?includeAll=true'
+        # define the headers to get the dashboard
+        base64string = base64.b64encode(bytes(user + ':' + password, 'utf-8'))
+        headers = {'Authorization': 'Basic ' + base64string.decode('ascii')}
+        # get the dashboard
+        response = requests.get(newurl, headers=headers)
+        # convert the response to json
+        dashboard = json.loads(response.text)
+        # write the dashboard to a file
+        #create a directory if doesn't exist
+        if not os.path.exists('dashboards'):
+            os.makedirs('dashboards')
+            print('created directory')
+        with open('dashboards/' + dashboard['dashboard']['title'] + '.json', 'w') as f:
+            f.write(json.dumps(dashboard["dashboard"]))
+            f.close()
+            print('Dashboard ' + dashboard['dashboard']['title'] + ' downloaded')
+            print('--------------------------------------------------------------------------------')
+
+
+#call the function download_dashboards_by_url
+download_dashboards('{{url}}', '{{user}}', '{{password}}')
+
+# EOF
+print('All dashboards downloaded')
+print('--------------------------------------------------------------------------------')
+
+
+
+
+
+

@@ -1,0 +1,16 @@
+---
+# tasks file for grafana-backup
+
+- name: Install Python dependencies
+  pip: name={{ item }}
+  with_items:
+  - requests
+
+- name: copy grafana python jinja template to tmp directory
+  template:
+    src: "{{ role_path }}/templates/grafana.j2"
+    dest: /tmp/grafana.py
+    mode: 0755
+
+- name: Execute the Python script
+  script: /tmp/grafana.py

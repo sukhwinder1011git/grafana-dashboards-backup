@@ -1,0 +1,20 @@
+---
+- name: Manage development environment
+  hosts: localhost
+  connection: local
+  vars:
+    postdeployer: "{{ lookup('file','/opt/deployer/inventories/postdeploy.yml') | from_yaml }}"
+
+  tasks:
+  - name: set fact user , password and url
+    set_fact:
+      grafana_user: "{{ postdeployer.all.vars.postdeploy.nginx.SROuser }}"
+      grafana_pass: "{{ postdeployer.all.vars.postdeploy.nginx.SROpassword }}"
+      grafana_url: "{{ postdeployer.all.vars.postdeploy.alert.grafana_base_url }}"
+
+  - import_role:
+      name: grafana-backup
+    vars:
+      user: "{{ grafana_user }}"
+      password: "{{ grafana_pass }}"
+      url: "{{ grafana_url }}"

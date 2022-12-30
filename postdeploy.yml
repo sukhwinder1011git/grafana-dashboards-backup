@@ -1,0 +1,8 @@
+all:
+  vars:
+    postdeploy:
+      alert:
+        grafana_base_url: "http://grafana.test-domain.com:3000"
+      nginx:
+        SROuser: sro-user1
+        SROpassword: sro-user1-password
